@@ -25,6 +25,7 @@ const FullPagePreview = ({ files }) => {
     if (!files) return {};
     return detectDependencies(files);
   }, [files]);
+
   return (
     <div className="h-screen w-full bg-white overflow-hidden">
       <SandpackProvider
@@ -36,7 +37,6 @@ const FullPagePreview = ({ files }) => {
             "https://cdn.tailwindcss.com",
             "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css",
           ],
-
           logLevel: 0,
         }}
         className="h-full w-full"
