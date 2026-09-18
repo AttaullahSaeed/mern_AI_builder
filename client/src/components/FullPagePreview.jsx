@@ -25,6 +25,7 @@ const FullPagePreview = ({ files }) => {
     if (!files) return {};
     return detectDependencies(files);
   }, [files]);
+
   return (
     <div className="h-screen w-full bg-white overflow-hidden">
       <SandpackProvider
