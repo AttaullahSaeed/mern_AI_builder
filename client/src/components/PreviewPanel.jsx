@@ -10,46 +10,45 @@ import { detectDependencies } from "../utils/sandpackUtils";
 import SandpackErrorMonitor from "./SandpackErrorMonitor";
 import { useAppContext } from "../context/AppContext";
 
-// Watches for file edits inside Sandpack editor and saves changes to DB & live state
-function SandpackFileWatcher({ onLiveFilesChange }) {
-  const { sandpack } = useSandpack();
-  const { files } = sandpack;
-  const { activeProject, updateProjectFiles } = useAppContext();
-  const activeProjectRef = useRef(activeProject);
-  useEffect(() => {
-    activeProjectRef.current = activeProject;
-  }, [activeProject]);
-
-  useEffect(() => {
-    const project = activeProjectRef.current;
-    if (!project) return;
-
-    const updatedFiles = {};
-    let hasChanges = false;
-
-    for (const [path, fileObj] of Object.entries(files)) {
-      const fileCode = fileObj.code;
-      updatedFiles[path] = fileCode;
-
-      const originalContent =
-        typeof project.files?.[path] === "string"
-          ? project.files[path]
-          : project.files?.[path]?.content;
-
-      if (originalContent !== undefined && originalContent !== fileCode) {
-        hasChanges = true;
-      }
-    }
-    onLiveFilesChange?.(updatedFiles);
-
-    if (hasChanges) {
-      updateProjectFiles?.(updatedFiles);
-    }
-  }, [files]);
-  return null;
-}
-
 const PreviewPanel = ({ project, activeFile, showCode }) => {
+  // Watches for file edits inside Sandpack editor and saves changes to DB & live state
+  function SandpackFileWatcher({ onLiveFilesChange }) {
+    const { sandpack } = useSandpack();
+    const { files } = sandpack;
+    const { activeProject, updateProjectFiles } = useAppContext();
+    const activeProjectRef = useRef(activeProject);
+    useEffect(() => {
+      activeProjectRef.current = activeProject;
+    }, [activeProject]);
+
+    useEffect(() => {
+      const project = activeProjectRef.current;
+      if (!project) return;
+
+      const updatedFiles = {};
+      let hasChanges = false;
+
+      for (const [path, fileObj] of Object.entries(files)) {
+        const fileCode = fileObj.code;
+        updatedFiles[path] = fileCode;
+
+        const originalContent =
+          typeof project.files?.[path] === "string"
+            ? project.files[path]
+            : project.files?.[path]?.content;
+
+        if (originalContent !== undefined && originalContent !== fileCode) {
+          hasChanges = true;
+        }
+      }
+      onLiveFilesChange?.(updatedFiles);
+
+      if (hasChanges) {
+        updateProjectFiles?.(updatedFiles);
+      }
+    }, [files]);
+    return null;
+  }
   const [showErrorOverlay, setShowErrorOverlay] = useState(true);
   // Keep local state of files that updates as user types
   const [liveFiles, setLiveFiles] = useState(project.files);
@@ -93,7 +92,7 @@ const PreviewPanel = ({ project, activeFile, showCode }) => {
   }, [liveFiles]);
 
   return (
-    <div style={{ height: "100%", width: "100%" }}>
+    <div className="h-full w-full">
       <SandpackProvider
         key={project._id}
         template="react"
