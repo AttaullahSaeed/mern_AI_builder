@@ -16,7 +16,7 @@ const setSessionCookie = (res, payload) => {
 };
 
 // 1. Register User
-export const register = async (req, res) => {
+export const register = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
 

@@ -28,7 +28,7 @@ export function AppContextProvider({ children }) {
 
   const checkSession = useCallback(async () => {
     try {
-      const { data } = await api.get("/api/auth/me");
+      const { data } = await api.get("/api/auth/profile");
       setUser(data.user);
     } catch (error) {
       setUser(null);
@@ -86,8 +86,9 @@ export function AppContextProvider({ children }) {
 
   /// Project actions
 
-  const loadProjects = async () => {
+  const loadProjects = useCallback(async () => {
     if (!user) return;
+
     try {
       const { data } = await api.get("/api/projects");
       setProjects(data);
@@ -96,7 +97,7 @@ export function AppContextProvider({ children }) {
     } finally {
       setLoadingProjects(false);
     }
-  };
+  }, [user]);
 
   const loadProject = async (id, silent = false) => {
     if (!user) return;
