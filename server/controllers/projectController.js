@@ -3,7 +3,7 @@ import Project from "../models/Project.js";
 import crypto from "crypto";
 import { generateProject } from "../services/ai.js";
 
-function hashContent() {
+function hashContent(content) {
   return crypto.createHash("md5").update(content).digest("hex").slice(0, 12);
 }
 
@@ -92,7 +92,7 @@ async function runBackgroundGeneration(projectId, prompt) {
           currentFile: path,
         });
       },
-      onFileComplete: async (path) => {
+      onFileComplete: async (path, code) => {
         console.log(
           `[Background AI] Finished file ${path} for project ${projectId}`,
         );
@@ -135,7 +135,7 @@ async function runBackgroundGeneration(projectId, prompt) {
     );
     await Project.findByIdAndUpdate(projectId, {
       status: "failed",
-      error: err.message,
+      error: error.message,
       $push: {
         messages: {
           role: "assistant",
@@ -182,7 +182,7 @@ export async function getProject(req, res) {
   for (const [path, entry] of Object.entries(project.files)) {
     filesObj[path] = entry.content;
   }
-  res.json({
+  res.status(200).json({
     _id: project._id,
     name: project.name,
     description: project.description,
@@ -213,7 +213,7 @@ export async function deleteProject(req, res) {
     res.status(404).json({ error: "Project not found" });
     return;
   }
-  res.json({
+  res.status(200).json({
     success: true,
   });
 }
@@ -254,7 +254,7 @@ export async function updateProjectFiles() {
   for (const [path, entry] of Object.entries(project.files)) {
     filesObj[path] = entry.content;
   }
-  res.json({
+  res.status(200).json({
     _id: project._id,
     name: project.name,
     description: project.description,
@@ -285,7 +285,7 @@ export async function publishedProject(req, res) {
     res.status(404).json({ error: "Project not found" });
     return;
   }
-  res.json({ success: true, published: project.published });
+  res.status(200).json({ success: true, published: project.published });
 }
 
 // GET /api/projects/public/:id
@@ -305,7 +305,7 @@ export async function getPublicProject(req, res) {
   for (const [path, entry] of Object.entries(project.files)) {
     filesObj[path] = entry.content;
   }
-  res.json({
+  res.status(200).json({
     _id: project._id,
     name: project.name,
     description: project.description,

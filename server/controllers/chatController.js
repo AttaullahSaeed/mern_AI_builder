@@ -26,7 +26,7 @@ export async function chat(req, res) {
   }
   const project = await Project.findOne({
     _id: req.params.id,
-    owner: req.user.id,
+    owner: req.user,
   });
   if (!project) {
     res.status(404).json({ error: "Project not found" });

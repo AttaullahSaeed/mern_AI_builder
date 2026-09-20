@@ -99,13 +99,14 @@ export function AppContextProvider({ children }) {
     }
   }, [user]);
 
-  const loadProject = async (id, silent = false) => {
+  const loadProject = useCallback(async (id, silent = false) => {
     if (!user) return;
     if (!silent) setLoadingActiveProject(true);
 
     try {
       const { data } = await api.get(`/api/projects/${id}`);
       setActiveProject(data);
+
       const files = Object.keys(data.files);
       if (files.length > 0) {
         setActiveFile((prev) => {
@@ -122,7 +123,7 @@ export function AppContextProvider({ children }) {
     } finally {
       if (!silent) setLoadingActiveProject(false);
     }
-  };
+  });
 
   // Automatically poll active project status if generating or pending
   useEffect(() => {
