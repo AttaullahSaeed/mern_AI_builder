@@ -106,6 +106,7 @@ export function AppContextProvider({ children }) {
     try {
       const { data } = await api.get(`/api/projects/${id}`);
       setActiveProject(data);
+
       const files = Object.keys(data.files);
       if (files.length > 0) {
         setActiveFile((prev) => {

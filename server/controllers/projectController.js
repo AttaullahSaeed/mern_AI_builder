@@ -3,7 +3,7 @@ import Project from "../models/Project.js";
 import crypto from "crypto";
 import { generateProject } from "../services/ai.js";
 
-function hashContent() {
+function hashContent(content) {
   return crypto.createHash("md5").update(content).digest("hex").slice(0, 12);
 }
 
@@ -92,7 +92,7 @@ async function runBackgroundGeneration(projectId, prompt) {
           currentFile: path,
         });
       },
-      onFileComplete: async (path) => {
+      onFileComplete: async (path, code) => {
         console.log(
           `[Background AI] Finished file ${path} for project ${projectId}`,
         );
