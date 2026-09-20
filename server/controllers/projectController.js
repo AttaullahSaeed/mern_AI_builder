@@ -135,7 +135,7 @@ async function runBackgroundGeneration(projectId, prompt) {
     );
     await Project.findByIdAndUpdate(projectId, {
       status: "failed",
-      error: err.message,
+      error: error.message,
       $push: {
         messages: {
           role: "assistant",
