@@ -174,17 +174,18 @@ export async function generateProject(prompt, callbacks) {
       `[AI] Failed to generate ${pendingFiles.length} files after all retry rounds: ${failedPaths}`,
     );
 
-    if (pendingFiles.some((f) => f.path === "/App.js")) {
-      const ext = file.path.split(".").pop()?.toLowerCase();
+    const failedAppFile = pendingFiles.find((f) => f.path === "/App.js");
+    if (failedAppFile) {
+      const ext = failedAppFile.path.split(".").pop()?.toLowerCase();
 
       if (ext === "css") {
-        files[file.path] =
-          `/* ${file.description} — Generation failed, please retry */\n`;
+        files[failedAppFile.path] =
+          `/* ${failedAppFile.description} — Generation failed, please retry */\n`;
       } else {
-        files[file.path] =
+        files[failedAppFile.path] =
           "import React from 'react';\n\n" +
           `// ⚠️ This file could not be generated. Please retry.\n` +
-          `// Purpose: ${file.description}\n\n` +
+          `// Purpose: ${failedAppFile.description}\n\n` +
           "export default function Placeholder() {\n" +
           "  return (\n" +
           "    <div className='p-8 text-center text-zinc-400'>\n" +

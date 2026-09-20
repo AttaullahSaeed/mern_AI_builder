@@ -29,7 +29,7 @@ export async function createProject(req, res) {
       { role: "assistant", content: "Planning Project Structure..." },
     ],
     version: 0,
-    owner: req.user.userId,
+    owner: req.user,
     status: "pending",
     filesPlanned: [],
     filesGenerated: [],
@@ -131,7 +131,7 @@ async function runBackgroundGeneration(projectId, prompt) {
   } catch (error) {
     console.error(
       `[Background AI] Fatal generation error for project ${projectId}:`,
-      err,
+      error,
     );
     await Project.findByIdAndUpdate(projectId, {
       status: "failed",
@@ -156,11 +156,11 @@ export async function listProjects(req, res) {
   }
 
   const projects = await Project.find(
-    { owner: req.user.userId },
+    { owner: req.user },
     { name: 1, description: 1, version: 1, createdAt: 1, updatedAt: 1 },
   ).sort({ updatedAt: -1 });
 
-  res.json(projects);
+  res.status(200).json(projects);
 }
 
 // GET /api/projects/:id
@@ -172,7 +172,7 @@ export async function getProject(req, res) {
   }
   const project = await Project.findOne({
     _id: req.params.id,
-    owner: req.user.id,
+    owner: req.user,
   });
   if (!project) {
     res.status(404).json({ error: "Project not found" });
@@ -207,7 +207,7 @@ export async function deleteProject(req, res) {
   }
   const result = await Project.findOneAndDelete({
     _id: req.params.id,
-    owner: req.user.id,
+    owner: req.user,
   });
   if (!result) {
     res.status(404).json({ error: "Project not found" });
@@ -233,7 +233,7 @@ export async function updateProjectFiles() {
   }
   const project = await Project.findOne({
     _id: req.params.id,
-    owner: req.user.id,
+    owner: req.user,
   });
   if (!project) {
     res.status(404).json({ error: "Project not found" });
@@ -276,7 +276,7 @@ export async function publishedProject(req, res) {
   const project = await Project.findOneAndUpdate(
     {
       _id: req.params.id,
-      owner: req.user.id,
+      owner: req.user,
     },
     { published: true },
     { returnDocument: "after" },
